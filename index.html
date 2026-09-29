@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Task Builder</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #635bff;
+    --primary-dark: #5148e8;
+    --dark: #111827;
+    --gray: #6b7280;
+    --light: #f5f7fb;
+    --border: #e5e7eb;
+    --white: #fff;
+    --green: #16a34a;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --shadow: 0 15px 40px rgba(15,23,42,.08);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* HEADER */
+
+.header {
+    height: 76px;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    gap: 35px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: auto;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#635bff,#8b5cf6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.logo strong {
+    display: block;
+    font-size: 15px;
+}
+
+.logo span {
+    display: block;
+    color: var(--gray);
+    font-size: 12px;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: var(--gray);
+    font-size: 14px;
+    transition: .2s;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--primary);
+}
+
+.create-btn {
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: var(--dark);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    transition: .25s;
+}
+
+.create-btn:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* HERO */
+
+.hero {
+    max-width: 1200px;
+    margin: auto;
+    padding: 90px 30px 70px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 13px;
+    background: #eeecff;
+    color: var(--primary);
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(44px,6vw,72px);
+    line-height: .98;
+    letter-spacing: -3px;
+    margin-bottom: 25px;
+}
+
+.hero h1 span {
+    color: var(--primary);
+}
+
+.hero p {
+    max-width: 520px;
+    color: var(--gray);
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    border: none;
+    transition: .25s;
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background: white;
+    color: var(--dark);
+    border: 1px solid var(--border);
+}
+
+.secondary-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* PREVIEW */
+
+.hero-preview {
+    display: flex;
+    justify-content: center;
+}
+
+.preview-window {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transform: rotate(2deg);
+    transition: .4s;
+}
+
+.preview-window:hover {
+    transform: rotate(0) translateY(-8px);
+}
+
+.window-top {
+    height: 42px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+}
+
+.window-top span {
+    width: 9px;
+    height: 9px;
+    background: #d1d5db;
+    border-radius: 50%;
+}
+
+.preview-question {
+    padding: 35px;
+}
+
+.preview-question small {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.preview-question h3 {
+    margin: 12px 0 22px;
+    line-height: 1.4;
+}
+
+.mini-answer {
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+}
+
+.mini-answer.correct {
+    background: #ecfdf5;
+    border-color: #86efac;
+}
+
+.mini-answer.correct span {
+    margin-left: auto;
+    color: var(--green);
+}
+
+.progress-mini {
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 25px;
+}
+
+.progress-mini div {
+    width: 65%;
+    height: 100%;
+    background: var(--primary);
+}
+
+/* STATS */
+
+.stats {
+    max-width: 1100px;
+    margin: 0 auto 80px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    overflow: hidden;
+}
+
+.stats div {
+    text-align: center;
+    padding: 25px;
+    border-right: 1px solid var(--border);
+}
+
+.stats div:last-child {
+    border: none;
+}
+
+.stats strong {
+    display: block;
+    color: var(--primary);
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.stats span {
+    color: var(--gray);
+    font-size: 13px;
+}
+
+/* TASKS */
+
+.tasks-section {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px 30px 80px;
+}
+
+.section-label {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.section-heading h2 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.section-heading p {
+    color: var(--gray);
+}
+
+.filters {
+    display: flex;
+    gap: 12px;
+    margin: 35px 0;
+}
+
+.search-box {
+    flex: 1;
+    height: 46px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 8px;
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.filters select {
+    height: 46px;
+    padding: 0 15px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+}
+
+/* CARDS */
+
+.task-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+.task-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 23px;
+    box-shadow: 0 7px 25px rgba(15,23,42,.04);
+    transition: .3s;
+    animation: fadeUp .5s ease both;
+}
+
+.task-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+}
+
+.task-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.task-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: #f1efff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.difficulty {
+    height: fit-content;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.easy {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.medium {
+    color: #b45309;
+    background: #fef3c7;
+}
+
+.hard {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.task-card h3 {
+    font-size: 18px;
+    margin-bottom: 9px;
+}
+
+.task-card p {
+    min-height: 42px;
+    color: var(--gray);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.task-meta {
+    display: flex;
+    gap: 12px;
+    color: var(--gray);
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.task-start {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    background: #f5f3ff;
+    color: var(--primary);
+    font-weight: 700;
+    transition: .2s;
+}
+
+.task-start:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.empty-tasks {
+    grid-column: 1/-1;
+    background: white;
+    border: 1px dashed #d1d5db;
+    border-radius: 18px;
+    padding: 70px 20px;
+    text-align: center;
+    color: var(--gray);
+}
+
+/* INFO */
+
+.info-section {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 30px 80px;
+}
+
+.info-card {
+    padding: 25px;
+    background: var(--dark);
+    color: white;
+    border-radius: 18px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.info-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.info-card p {
+    color: #9ca3af;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 30px 5%;
+    border-top: 1px solid var(--border);
+    color: var(--gray);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+/* ANIMATION */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .task-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px) {
+
+    .header {
+        height: auto;
+        padding: 15px 20px;
+        flex-wrap: wrap;
+    }
+
+    nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .create-btn {
+        display: none;
+    }
+
+    .hero {
+        padding: 55px 20px;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+    }
+
+    .stats {
+        margin: 0 20px 60px;
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .stats div:nth-child(2) {
+        border-right: none;
+    }
+
+    .task-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        <div class="logo-icon">IT</div>
+
+        <div>
+            <strong>Interactive</strong>
+            <span>Task Builder</span>
+        </div>
+    </div>
+
+    <nav>
+        <a href="index.html" class="active">Главная</a>
+        <a href="#tasks">Все задания</a>
+        <a href="builder.html">Создать</a>
+        <a href="#myTasks">Мои задания</a>
+    </nav>
+
+    <a href="builder.html" class="create-btn">
+        + Создать задание
+    </a>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            ⚡ Интерактивное обучение
+        </div>
+
+        <h1>
+            Создавай.
+            <span>Обучай.</span>
+            Проверяй.
+        </h1>
+
+        <p>
+            Конструктор интерактивных учебных заданий
+            для преподавателей и студентов.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="#tasks" class="primary-btn">
+                Смотреть задания →
+            </a>
+
+            <a href="builder.html" class="secondary-btn">
+                Создать упражнение
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-preview">
+
+        <div class="preview-window">
+
+            <div class="window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="preview-question">
+
+                <small>ВОПРОС 03 / 10</small>
+
+                <h3>
+                    Какой метод добавляет
+                    элемент в конец массива?
+                </h3>
+
+                <div class="mini-answer correct">
+                    <b>A</b>
+                    push()
+                    <span>✓</span>
+                </div>
+
+                <div class="mini-answer">
+                    <b>B</b>
+                    pop()
+                </div>
+
+                <div class="mini-answer">
+                    <b>C</b>
+                    shift()
+                </div>
+
+                <div class="progress-mini">
+                    <div></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="stats">
+
+    <div>
+        <strong id="taskCount">0</strong>
+        <span>Заданий</span>
+    </div>
+
+    <div>
+        <strong>8</strong>
+        <span>Типов упражнений</span>
+    </div>
+
+    <div>
+        <strong>100%</strong>
+        <span>Локальная работа</span>
+    </div>
+
+    <div>
+        <strong>∞</strong>
+        <span>Возможностей</span>
+    </div>
+
+</section>
+
+
+<section class="tasks-section" id="tasks">
+
+    <div class="section-heading">
+
+        <div class="section-label">
+            КАТАЛОГ
+        </div>
+
+        <h2>
+            Интерактивные задания
+        </h2>
+
+        <p>
+            Выбери упражнение и начни обучение.
+        </p>
+
+    </div>
+
+
+    <div class="filters">
+
+        <div class="search-box">
+            🔍
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Поиск задания..."
+            >
+        </div>
+
+        <select id="typeFilter">
+
+            <option value="all">
+                Все типы
+            </option>
+
+            <option value="single">
+                Один ответ
+            </option>
+
+            <option value="multiple">
+                Несколько ответов
+            </option>
+
+            <option value="matching">
+                Сопоставление
+            </option>
+
+            <option value="sequence">
+                Последовательность
+            </option>
+
+            <option value="category">
+                Распределение
+            </option>
+
+            <option value="fill">
+                Пропуски
+            </option>
+
+            <option value="error">
+                Найди ошибку
+            </option>
+
+            <option value="sort">
+                Сортировка
+            </option>
+
+        </select>
+
+
+        <select id="difficultyFilter">
+
+            <option value="all">
+                Любая сложность
+            </option>
+
+            <option value="Легко">
+                Легко
+            </option>
+
+            <option value="Средне">
+                Средне
+            </option>
+
+            <option value="Сложно">
+                Сложно
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div id="taskGrid" class="task-grid"></div>
+
+</section>
+
+
+<section class="info-section" id="myTasks">
+
+    <div class="info-card">
+
+        <div class="info-icon">
+            💾
+        </div>
+
+        <div>
+            <h3>
+                Задания сохраняются автоматически
+            </h3>
+
+            <p>
+                Созданные упражнения сохраняются
+                в localStorage браузера.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <div>
+        <strong>Interactive Task Builder</strong>
+        · Учебный проект
+    </div>
+
+    <div>
+        HTML5 · CSS3 · JavaScript · DOM · localStorage
+    </div>
+
+</footer>
+
+
+<script>
+
+/* ==========================================
+   ДАННЫЕ
+========================================== */
+
+const STORAGE_KEY = "interactiveTaskBuilder_tasks";
+
+const TASK_TYPES = {
+
+    single: {
+        name: "Один правильный ответ",
+        icon: "🔘"
+    },
+
+    multiple: {
+        name: "Несколько правильных ответов",
+        icon: "☑️"
+    },
+
+    matching: {
+        name: "Сопоставление",
+        icon: "🔗"
+    },
+
+    sequence: {
+        name: "Последовательность",
+        icon: "🔢"
+    },
+
+    category: {
+        name: "Распределение",
+        icon: "📂"
+    },
+
+    fill: {
+        name: "Заполнение пропусков",
+        icon: "✏️"
+    },
+
+    error: {
+        name: "Найди ошибку",
+        icon: "🐞"
+    },
+
+    sort: {
+        name: "Интерактивная сортировка",
+        icon: "↕️"
+    }
+
+};
+
+
+const defaultTasks = [
+
+    {
+        id: "demo1",
+        title: "Методы массивов JavaScript",
+        type: "single",
+        difficulty: "Легко",
+        description: "Проверь знания основных методов массивов.",
+        items: 4,
+        question: "Какой метод добавляет элемент в конец массива?",
+        options: ["push()", "pop()", "shift()", "slice()"],
+        correct: 0
+    },
+
+    {
+        id: "demo2",
+        title: "Типы данных JavaScript",
+        type: "multiple",
+        difficulty: "Средне",
+        description: "Выберите все типы данных JavaScript.",
+        items: 4,
+        question: "Какие варианты являются типами данных JavaScript?",
+        options: ["String", "Number", "Boolean", "HTML"],
+        correct: [0,1,2]
+    },
+
+    {
+        id: "demo3",
+        title: "Веб-технологии",
+        type: "matching",
+        difficulty: "Легко",
+        description: "Соедините технологию с её назначением.",
+        items: 4,
+        question: "Сопоставьте технологию и её назначение.",
+        pairs: [
+            {
+                left: "HTML",
+                right: "Структура веб-страницы"
+            },
+            {
+                left: "CSS",
+                right: "Оформление веб-страницы"
+            },
+            {
+                left: "JavaScript",
+                right: "Интерактивность"
+            },
+            {
+                left: "SQL",
+                right: "Работа с данными"
+            }
+        ]
+    },
+
+    {
+        id: "demo4",
+        title: "Этапы разработки",
+        type: "sequence",
+        difficulty: "Средне",
+        description: "Расставьте этапы разработки сайта.",
+        items: 5,
+        question: "Расположите этапы разработки в правильном порядке.",
+        sequence: [
+            "Анализ задачи",
+            "Проектирование",
+            "Разработка",
+            "Тестирование",
+            "Публикация"
+        ]
+    },
+
+    {
+        id: "demo5",
+        title: "Frontend и Backend",
+        type: "category",
+        difficulty: "Средне",
+        description: "Распределите технологии по категориям.",
+        items: 6,
+        question: "Распределите технологии по категориям.",
+        categories: ["Frontend","Backend"],
+        categoryItems: [
+            {text:"HTML",category:"Frontend"},
+            {text:"CSS",category:"Frontend"},
+            {text:"JavaScript",category:"Frontend"},
+            {text:"Node.js",category:"Backend"},
+            {text:"PHP",category:"Backend"},
+            {text:"Express",category:"Backend"}
+        ]
+    },
+
+    {
+        id: "demo6",
+        title: "Переменные JavaScript",
+        type: "fill",
+        difficulty: "Легко",
+        description: "Заполните пропуск.",
+        items: 1,
+        question: "Для объявления переменной можно использовать ключевое слово ____.",
+        answers: ["let","const","var"]
+    },
+
+    {
+        id: "demo7",
+        title: "Найди ошибку в коде",
+        type: "error",
+        difficulty: "Сложно",
+        description: "Найдите строку с ошибкой.",
+        items: 4,
+        question: "Выберите строку, содержащую ошибку.",
+        code: [
+            "const numbers = [1, 2, 3];",
+            "numbers.push(4);",
+            "console.log(number);",
+            "console.log(numbers);"
+        ],
+        correct: 2,
+        explanation:
+            "Используется переменная number, хотя объявлена numbers."
+    },
+
+    {
+        id: "demo8",
+        title: "Сортировка типов данных",
+        type: "sort",
+        difficulty: "Легко",
+        description: "Распределите значения по типам.",
+        items: 6,
+        question: "Распределите значения по правильным типам данных.",
+        categories: ["String","Number","Boolean"],
+        categoryItems: [
+            {text:"Hello",category:"String"},
+            {text:"2026",category:"String"},
+            {text:"25",category:"Number"},
+            {text:"3.14",category:"Number"},
+            {text:"true",category:"Boolean"},
+            {text:"false",category:"Boolean"}
+        ]
+    }
+
+];
+
+
+/* ==========================================
+   LOCAL STORAGE
+========================================== */
+
+function getSavedTasks() {
+
+    try {
+        return JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        ) || [];
+    } catch {
+        return [];
+    }
+
+}
+
+function getAllTasks() {
+
+    return [
+        ...defaultTasks,
+        ...getSavedTasks()
+    ];
+
+}
+
+
+/* ==========================================
+   HTML PROTECTION
+========================================== */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+   RENDER
+========================================== */
+
+const taskGrid =
+    document.getElementById("taskGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const typeFilter =
+    document.getElementById("typeFilter");
+
+const difficultyFilter =
+    document.getElementById("difficultyFilter");
+
+const taskCount =
+    document.getElementById("taskCount");
+
+
+function renderTasks() {
+
+    const search =
+        searchInput.value.toLowerCase().trim();
+
+    const type =
+        typeFilter.value;
+
+    const difficulty =
+        difficultyFilter.value;
+
+
+    const tasks =
+        getAllTasks().filter(task => {
+
+            const matchesSearch =
+                task.title
+                    .toLowerCase()
+                    .includes(search);
+
+            const matchesType =
+                type === "all" ||
+                task.type === type;
+
+            const matchesDifficulty =
+                difficulty === "all" ||
+                task.difficulty === difficulty;
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesDifficulty
+            );
+
+        });
+
+
+    taskCount.textContent =
+        tasks.length;
+
+
+    taskGrid.innerHTML = "";
+
+
+    if (!tasks.length) {
+
+        taskGrid.innerHTML = `
+            <div class="empty-tasks">
+                <div style="font-size:40px">🔎</div>
+                <h3>Ничего не найдено</h3>
+                <p>Измените параметры поиска.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    tasks.forEach((task,index) => {
+
+        const typeData =
+            TASK_TYPES[task.type] ||
+            {
+                name:"Задание",
+                icon:"📝"
+            };
+
+
+        const difficultyClass =
+            task.difficulty === "Легко"
+                ? "easy"
+                : task.difficulty === "Средне"
+                ? "medium"
+                : "hard";
+
+
+        const card =
+            document.createElement("article");
+
+        card.className = "task-card";
+
+        card.style.animationDelay =
+            `${index * .04}s`;
+
+
+        card.innerHTML = `
+
+            <div class="task-top">
+
+                <div class="task-icon">
+                    ${typeData.icon}
+                </div>
+
+                <span class="difficulty ${difficultyClass}">
+                    ${escapeHtml(task.difficulty || "Средне")}
+                </span>
+
+            </div>
+
+            <h3>
+                ${escapeHtml(task.title)}
+            </h3>
+
+            <p>
+                ${escapeHtml(
+                    task.description ||
+                    typeData.name
+                )}
+            </p>
+
+            <div class="task-meta">
+                <span>${typeData.name}</span>
+                <span>${task.items || 1} элементов</span>
+            </div>
+
+            <button
+                class="task-start"
+                data-id="${task.id}"
+            >
+                Начать →
+            </button>
+
+        `;
+
+
+        taskGrid.appendChild(card);
+
+    });
+
+
+    document
+        .querySelectorAll(".task-start")
+        .forEach(button => {
+
+            button.addEventListener("click",() => {
+
+                const task =
+                    getAllTasks().find(
+                        item =>
+                            item.id ===
+                            button.dataset.id
+                    );
+
+
+                if (!task) return;
+
+
+                sessionStorage.setItem(
+                    "playTask",
+                    JSON.stringify(task)
+                );
+
+
+                window.location.href =
+                    "builder.html?play=1";
+
+            });
+
+        });
+
+}
+
+
+searchInput.addEventListener(
+    "input",
+    renderTasks
+);
+
+typeFilter.addEventListener(
+    "change",
+    renderTasks
+);
+
+difficultyFilter.addEventListener(
+    "change",
+    renderTasks
+);
+
+
+renderTasks();
+
+</script>
+
+</body>
+</html>

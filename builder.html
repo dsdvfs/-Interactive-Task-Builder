@@ -1,0 +1,3771 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Конструктор — Interactive Task Builder</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #635bff;
+    --primary-dark: #5148e8;
+    --dark: #111827;
+    --gray: #6b7280;
+    --light: #f5f7fb;
+    --border: #e5e7eb;
+    --white: #fff;
+    --green: #16a34a;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --shadow: 0 15px 40px rgba(15,23,42,.08);
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--light);
+    color: var(--dark);
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* HEADER */
+
+.header {
+    height: 76px;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    gap: 35px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: auto;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#635bff,#8b5cf6);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+}
+
+.logo strong {
+    display: block;
+}
+
+.logo span {
+    display: block;
+    color: var(--gray);
+    font-size: 12px;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: var(--gray);
+    font-size: 14px;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--primary);
+}
+
+.back-btn {
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: var(--dark);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* PAGE */
+
+.page {
+    max-width: 1300px;
+    margin: auto;
+    padding: 55px 30px 100px;
+}
+
+.page-title {
+    margin-bottom: 35px;
+}
+
+.page-title h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.page-title p {
+    color: var(--gray);
+}
+
+.label {
+    color: var(--primary);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+
+/* TYPE */
+
+.type-selector {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 25px;
+}
+
+.type-selector h2 {
+    font-size: 19px;
+    margin-bottom: 20px;
+}
+
+.type-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+}
+
+.type-card {
+    text-align: left;
+    padding: 17px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: .25s;
+}
+
+.type-card:hover {
+    border-color: #aaa4ff;
+    transform: translateY(-2px);
+}
+
+.type-card.active {
+    border: 2px solid var(--primary);
+    background: #f7f5ff;
+}
+
+.type-card .icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.type-card strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.type-card small {
+    color: var(--gray);
+    font-size: 11px;
+}
+
+
+/* LAYOUT */
+
+.layout {
+    display: grid;
+    grid-template-columns: 1.25fr .75fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.editor,
+.preview {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.editor-header,
+.preview-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border);
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-header h2 {
+    font-size: 20px;
+}
+
+.mode-buttons {
+    display: flex;
+    background: #f3f4f6;
+    padding: 4px;
+    border-radius: 9px;
+}
+
+.mode-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    border-radius: 7px;
+}
+
+.mode-btn.active {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+}
+
+
+/* FORM */
+
+.form {
+    padding: 25px;
+}
+
+.group {
+    margin-bottom: 20px;
+}
+
+.group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.group input,
+.group textarea,
+.group select {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.group input:focus,
+.group textarea:focus,
+.group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px #635bff15;
+}
+
+
+/* OPTIONS */
+
+.rows {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.option-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 38px;
+    gap: 8px;
+    align-items: center;
+}
+
+.option-row input[type="text"] {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+}
+
+.remove {
+    width: 35px;
+    height: 35px;
+    border: none;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 9px;
+    font-size: 18px;
+}
+
+.add {
+    margin-top: 12px;
+    padding: 9px 13px;
+    border-radius: 9px;
+    border: 1px dashed #aaa4ff;
+    background: #f7f5ff;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+
+/* ACTIONS */
+
+.actions {
+    padding: 20px 25px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.primary,
+.secondary {
+    padding: 13px 18px;
+    border-radius: 11px;
+    font-weight: 700;
+    border: none;
+}
+
+.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.primary:hover {
+    background: var(--primary-dark);
+}
+
+.secondary {
+    background: white;
+    border: 1px solid var(--border);
+}
+
+
+/* PREVIEW */
+
+.preview {
+    position: sticky;
+    top: 100px;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.live {
+    color: var(--green);
+}
+
+.preview-content {
+    padding: 25px;
+    min-height: 350px;
+}
+
+.question h3 {
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.answer {
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 9px;
+    transition: .2s;
+}
+
+.answer:hover {
+    border-color: var(--primary);
+    background: #f8f7ff;
+}
+
+
+/* PLAY MODE */
+
+.play-container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.play-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 35px;
+    box-shadow: var(--shadow);
+}
+
+.play-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.play-type {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.progress {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--primary);
+    transition: .4s;
+}
+
+.play-card h1 {
+    font-size: 28px;
+    line-height: 1.4;
+    margin-bottom: 25px;
+}
+
+.play-option {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.play-option:hover {
+    border-color: var(--primary);
+    background: #f8f7ff;
+}
+
+.play-option.selected {
+    border-color: var(--primary);
+    background: #efedff;
+}
+
+.play-option.correct {
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+.play-option.wrong {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.play-input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    outline: none;
+    font-size: 16px;
+}
+
+.play-button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: none;
+    border-radius: 11px;
+    background: var(--primary);
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.play-button:hover {
+    background: var(--primary-dark);
+}
+
+
+/* RESULT */
+
+.result {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.result-icon {
+    font-size: 60px;
+}
+
+.result h2 {
+    font-size: 30px;
+    margin: 15px 0;
+}
+
+.score {
+    font-size: 55px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 20px;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.result-stat {
+    padding: 15px 25px;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.result-stat strong {
+    display: block;
+    font-size: 22px;
+}
+
+.result-stat span {
+    color: var(--gray);
+    font-size: 12px;
+}
+
+
+/* TOAST */
+
+.toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: var(--dark);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: .3s;
+    pointer-events: none;
+    z-index: 500;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* CONFETTI */
+
+.confetti {
+    position: fixed;
+    width: 9px;
+    height: 14px;
+    top: -20px;
+    z-index: 999;
+    animation: confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall {
+    to {
+        transform:
+            translateY(110vh)
+            rotate(720deg);
+        opacity: 0;
+    }
+}
+
+
+/* ANIMATION */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* MOBILE */
+
+@media(max-width:1000px) {
+
+    .type-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .preview {
+        position: static;
+    }
+}
+
+@media(max-width:700px) {
+
+    .header {
+        height: auto;
+        padding: 15px 20px;
+        flex-wrap: wrap;
+    }
+
+    nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .back-btn {
+        display: none;
+    }
+
+    .type-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page {
+        padding: 35px 15px 70px;
+    }
+
+    .page-title h1 {
+        font-size: 32px;
+    }
+
+    .editor-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .play-card {
+        padding: 22px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            IT
+        </div>
+
+        <div>
+            <strong>Interactive</strong>
+            <span>Task Builder</span>
+        </div>
+
+    </div>
+
+
+    <nav>
+
+        <a href="index.html">
+            Главная
+        </a>
+
+        <a href="index.html#tasks">
+            Все задания
+        </a>
+
+        <a href="builder.html" class="active">
+            Создать
+        </a>
+
+    </nav>
+
+
+    <a href="index.html" class="back-btn">
+        ← Назад
+    </a>
+
+</header>
+
+
+<main class="page" id="mainPage">
+
+
+    <div class="page-title">
+
+        <div class="label">
+            КОНСТРУКТОР
+        </div>
+
+        <h1>
+            Создание задания
+        </h1>
+
+        <p>
+            Выберите тип упражнения и заполните содержимое.
+        </p>
+
+    </div>
+
+
+    <section class="type-selector">
+
+        <h2>
+            1. Выберите тип упражнения
+        </h2>
+
+
+        <div class="type-grid">
+
+            <button class="type-card active" data-type="single">
+
+                <div class="icon">🔘</div>
+
+                <strong>
+                    Один ответ
+                </strong>
+
+                <small>
+                    Один правильный вариант
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="multiple">
+
+                <div class="icon">☑️</div>
+
+                <strong>
+                    Множественный выбор
+                </strong>
+
+                <small>
+                    Несколько правильных
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="matching">
+
+                <div class="icon">🔗</div>
+
+                <strong>
+                    Сопоставление
+                </strong>
+
+                <small>
+                    Соедини пары
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="sequence">
+
+                <div class="icon">🔢</div>
+
+                <strong>
+                    Последовательность
+                </strong>
+
+                <small>
+                    Расставь по порядку
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="category">
+
+                <div class="icon">📂</div>
+
+                <strong>
+                    Распределение
+                </strong>
+
+                <small>
+                    Разнеси по категориям
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="fill">
+
+                <div class="icon">✏️</div>
+
+                <strong>
+                    Пропуски
+                </strong>
+
+                <small>
+                    Заполни пропуск
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="error">
+
+                <div class="icon">🐞</div>
+
+                <strong>
+                    Найди ошибку
+                </strong>
+
+                <small>
+                    Найди ошибочную строку
+                </small>
+
+            </button>
+
+
+            <button class="type-card" data-type="sort">
+
+                <div class="icon">↕️</div>
+
+                <strong>
+                    Сортировка
+                </strong>
+
+                <small>
+                    Распредели элементы
+                </small>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <section class="layout">
+
+
+        <div class="editor">
+
+            <div class="editor-header">
+
+                <div>
+
+                    <div class="label">
+                        РЕДАКТОР
+                    </div>
+
+                    <h2 id="editorTitle">
+                        Один правильный ответ
+                    </h2>
+
+                </div>
+
+
+                <div class="mode-buttons">
+
+                    <button
+                        class="mode-btn active"
+                        id="editMode"
+                    >
+                        Редактор
+                    </button>
+
+                    <button
+                        class="mode-btn"
+                        id="previewMode"
+                    >
+                        Предпросмотр
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="editorContent"></div>
+
+
+            <div class="actions">
+
+                <button
+                    class="secondary"
+                    id="previewButton"
+                >
+                    👁 Предпросмотр
+                </button>
+
+                <button
+                    class="primary"
+                    id="saveButton"
+                >
+                    💾 Сохранить
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <aside class="preview">
+
+            <div class="preview-header">
+
+                <span>
+                    LIVE PREVIEW
+                </span>
+
+                <span class="live">
+                    ● LIVE
+                </span>
+
+            </div>
+
+
+            <div
+                class="preview-content"
+                id="previewContent"
+            >
+
+                <div
+                    style="
+                    text-align:center;
+                    padding:80px 10px;
+                    color:#6b7280;
+                    "
+                >
+
+                    <div style="font-size:45px">
+                        ✨
+                    </div>
+
+                    <p>
+                        Заполните редактор,
+                        чтобы увидеть предпросмотр.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+    </section>
+
+</main>
+
+
+<div class="toast" id="toast">
+    Задание сохранено!
+</div>
+
+
+<script>
+
+/* ==================================================
+   DATA
+================================================== */
+
+const STORAGE_KEY =
+    "interactiveTaskBuilder_tasks";
+
+
+const TYPES = {
+
+    single: {
+        name:"Один правильный ответ",
+        icon:"🔘"
+    },
+
+    multiple: {
+        name:"Несколько правильных ответов",
+        icon:"☑️"
+    },
+
+    matching: {
+        name:"Сопоставление",
+        icon:"🔗"
+    },
+
+    sequence: {
+        name:"Последовательность",
+        icon:"🔢"
+    },
+
+    category: {
+        name:"Распределение",
+        icon:"📂"
+    },
+
+    fill: {
+        name:"Заполнение пропусков",
+        icon:"✏️"
+    },
+
+    error: {
+        name:"Найди ошибку",
+        icon:"🐞"
+    },
+
+    sort: {
+        name:"Интерактивная сортировка",
+        icon:"↕️"
+    }
+
+};
+
+
+/* ==================================================
+   STATE
+================================================== */
+
+let currentType = "single";
+
+let editingTask = null;
+
+
+/* ==================================================
+   HELPERS
+================================================== */
+
+function escapeHtml(value) {
+
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function generateId() {
+
+    return "task-" +
+        Date.now() +
+        "-" +
+        Math.floor(Math.random()*10000);
+
+}
+
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+
+function saveTask(task) {
+
+    const tasks =
+        JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        ) || [];
+
+
+    tasks.push(task);
+
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(tasks)
+    );
+
+}
+
+
+/* ==================================================
+   SELECT TYPE
+================================================== */
+
+document
+    .querySelectorAll(".type-card")
+    .forEach(button => {
+
+        button.addEventListener("click",() => {
+
+            document
+                .querySelectorAll(".type-card")
+                .forEach(card => {
+
+                    card.classList.remove("active");
+
+                });
+
+
+            button.classList.add("active");
+
+
+            currentType =
+                button.dataset.type;
+
+
+            renderEditor();
+
+        });
+
+    });
+
+
+/* ==================================================
+   RENDER EDITOR
+================================================== */
+
+function renderEditor() {
+
+    const editor =
+        document.getElementById(
+            "editorContent"
+        );
+
+
+    document.getElementById(
+        "editorTitle"
+    ).textContent =
+        TYPES[currentType].name;
+
+
+    let html = `
+
+        <div class="form">
+
+            <div class="group">
+
+                <label>
+                    Название задания
+                </label>
+
+                <input
+                    id="title"
+                    type="text"
+                    placeholder="Например: Основы JavaScript"
+                >
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Описание
+                </label>
+
+                <textarea
+                    id="description"
+                    placeholder="Краткое описание задания..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Сложность
+                </label>
+
+                <select id="difficulty">
+
+                    <option>
+                        Легко
+                    </option>
+
+                    <option selected>
+                        Средне
+                    </option>
+
+                    <option>
+                        Сложно
+                    </option>
+
+                </select>
+
+            </div>
+
+    `;
+
+
+    if (
+        currentType === "single" ||
+        currentType === "multiple"
+    ) {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Вопрос
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Введите вопрос..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Варианты ответа
+                </label>
+
+                <div
+                    class="rows"
+                    id="options"
+                ></div>
+
+                <button
+                    class="add"
+                    type="button"
+                    id="addOption"
+                >
+                    + Добавить вариант
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (currentType === "matching") {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Инструкция
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Соедините технологию с её назначением..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Пары
+                </label>
+
+                <div
+                    class="rows"
+                    id="pairs"
+                ></div>
+
+                <button
+                    class="add"
+                    id="addPair"
+                    type="button"
+                >
+                    + Добавить пару
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (currentType === "sequence") {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Задание
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Расположите этапы разработки..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Элементы в правильном порядке
+                </label>
+
+                <div
+                    class="rows"
+                    id="sequenceRows"
+                ></div>
+
+                <button
+                    class="add"
+                    id="addSequence"
+                    type="button"
+                >
+                    + Добавить элемент
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        currentType === "category" ||
+        currentType === "sort"
+    ) {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Задание
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Распределите элементы..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Категории
+                </label>
+
+                <input
+                    id="categories"
+                    placeholder="Frontend, Backend"
+                >
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Элементы
+                </label>
+
+                <div
+                    class="rows"
+                    id="categoryRows"
+                ></div>
+
+                <button
+                    class="add"
+                    id="addCategory"
+                    type="button"
+                >
+                    + Добавить элемент
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (currentType === "fill") {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Предложение с пропуском
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Для объявления переменной можно использовать ____."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Допустимые ответы
+                </label>
+
+                <input
+                    id="answers"
+                    placeholder="let, const, var"
+                >
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (currentType === "error") {
+
+        html += `
+
+            <div class="group">
+
+                <label>
+                    Задание
+                </label>
+
+                <textarea
+                    id="question"
+                    placeholder="Выберите строку с ошибкой..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Код
+                </label>
+
+                <div
+                    class="rows"
+                    id="codeRows"
+                ></div>
+
+                <button
+                    class="add"
+                    id="addCode"
+                    type="button"
+                >
+                    + Добавить строку
+                </button>
+
+            </div>
+
+
+            <div class="group">
+
+                <label>
+                    Объяснение ошибки
+                </label>
+
+                <textarea
+                    id="explanation"
+                    placeholder="Объясните ошибку..."
+                ></textarea>
+
+            </div>
+
+        `;
+
+    }
+
+
+    html += `
+        </div>
+    `;
+
+
+    editor.innerHTML = html;
+
+
+    setupEditor();
+
+}
+
+
+/* ==================================================
+   SETUP EDITOR
+================================================== */
+
+function setupEditor() {
+
+    const fields =
+        document.querySelectorAll(
+            "#editorContent input, #editorContent textarea, #editorContent select"
+        );
+
+
+    fields.forEach(field => {
+
+        field.addEventListener(
+            "input",
+            updatePreview
+        );
+
+        field.addEventListener(
+            "change",
+            updatePreview
+        );
+
+    });
+
+
+    if (
+        currentType === "single" ||
+        currentType === "multiple"
+    ) {
+
+        addOption();
+        addOption();
+        addOption();
+        addOption();
+
+
+        document
+            .getElementById("addOption")
+            .addEventListener(
+                "click",
+                addOption
+            );
+
+    }
+
+
+    if (currentType === "matching") {
+
+        addPair();
+        addPair();
+        addPair();
+
+
+        document
+            .getElementById("addPair")
+            .addEventListener(
+                "click",
+                addPair
+            );
+
+    }
+
+
+    if (currentType === "sequence") {
+
+        addSequence();
+        addSequence();
+        addSequence();
+
+
+        document
+            .getElementById("addSequence")
+            .addEventListener(
+                "click",
+                addSequence
+            );
+
+    }
+
+
+    if (
+        currentType === "category" ||
+        currentType === "sort"
+    ) {
+
+        addCategory();
+        addCategory();
+        addCategory();
+        addCategory();
+
+
+        document
+            .getElementById("addCategory")
+            .addEventListener(
+                "click",
+                addCategory
+            );
+
+    }
+
+
+    if (currentType === "error") {
+
+        addCode();
+        addCode();
+        addCode();
+
+
+        document
+            .getElementById("addCode")
+            .addEventListener(
+                "click",
+                addCode
+            );
+
+    }
+
+
+    updatePreview();
+
+}
+
+
+/* ==================================================
+   ADD OPTION
+================================================== */
+
+function addOption() {
+
+    const container =
+        document.getElementById("options");
+
+    if (!container) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className = "option-row";
+
+
+    const inputType =
+        currentType === "multiple"
+            ? "checkbox"
+            : "radio";
+
+
+    row.innerHTML = `
+
+        <input
+            type="${inputType}"
+            name="correct"
+        >
+
+        <input
+            type="text"
+            placeholder="Вариант ответа"
+        >
+
+        <button
+            class="remove"
+            type="button"
+        >
+            ×
+        </button>
+
+    `;
+
+
+    row
+        .querySelector(".remove")
+        .addEventListener(
+            "click",
+            () => {
+                row.remove();
+                updatePreview();
+            }
+        );
+
+
+    row
+        .querySelectorAll("input")
+        .forEach(input => {
+
+            input.addEventListener(
+                "input",
+                updatePreview
+            );
+
+        });
+
+
+    container.appendChild(row);
+
+}
+
+
+/* ==================================================
+   ADD PAIR
+================================================== */
+
+function addPair() {
+
+    const container =
+        document.getElementById("pairs");
+
+    if (!container) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className = "option-row";
+
+
+    row.innerHTML = `
+
+        <input
+            type="text"
+            placeholder="Например: HTML"
+        >
+
+        <input
+            type="text"
+            placeholder="Например: Структура страницы"
+        >
+
+        <button
+            class="remove"
+            type="button"
+        >
+            ×
+        </button>
+
+    `;
+
+
+    row
+        .querySelector(".remove")
+        .addEventListener(
+            "click",
+            () => {
+                row.remove();
+                updatePreview();
+            }
+        );
+
+
+    row
+        .querySelectorAll("input")
+        .forEach(input => {
+
+            input.addEventListener(
+                "input",
+                updatePreview
+            );
+
+        });
+
+
+    container.appendChild(row);
+
+}
+
+
+/* ==================================================
+   ADD SEQUENCE
+================================================== */
+
+function addSequence() {
+
+    const container =
+        document.getElementById(
+            "sequenceRows"
+        );
+
+    if (!container) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className = "option-row";
+
+
+    row.innerHTML = `
+
+        <span>
+            ↕
+        </span>
+
+        <input
+            type="text"
+            placeholder="Элемент"
+        >
+
+        <button
+            class="remove"
+            type="button"
+        >
+            ×
+        </button>
+
+    `;
+
+
+    row
+        .querySelector(".remove")
+        .addEventListener(
+            "click",
+            () => {
+                row.remove();
+                updatePreview();
+            }
+        );
+
+
+    row
+        .querySelector("input")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    container.appendChild(row);
+
+}
+
+
+/* ==================================================
+   ADD CATEGORY
+================================================== */
+
+function addCategory() {
+
+    const container =
+        document.getElementById(
+            "categoryRows"
+        );
+
+    if (!container) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className = "option-row";
+
+
+    row.innerHTML = `
+
+        <span>
+            •
+        </span>
+
+        <input
+            type="text"
+            placeholder="Элемент"
+        >
+
+        <button
+            class="remove"
+            type="button"
+        >
+            ×
+        </button>
+
+    `;
+
+
+    row
+        .querySelector(".remove")
+        .addEventListener(
+            "click",
+            () => {
+                row.remove();
+                updatePreview();
+            }
+        );
+
+
+    row
+        .querySelector("input")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    container.appendChild(row);
+
+}
+
+
+/* ==================================================
+   ADD CODE
+================================================== */
+
+function addCode() {
+
+    const container =
+        document.getElementById(
+            "codeRows"
+        );
+
+    if (!container) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className = "option-row";
+
+
+    row.innerHTML = `
+
+        <span>
+            #
+        </span>
+
+        <input
+            type="text"
+            placeholder="Строка кода"
+        >
+
+        <button
+            class="remove"
+            type="button"
+        >
+            ×
+        </button>
+
+    `;
+
+
+    row
+        .querySelector(".remove")
+        .addEventListener(
+            "click",
+            () => {
+                row.remove();
+                updatePreview();
+            }
+        );
+
+
+    row
+        .querySelector("input")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    container.appendChild(row);
+
+}
+
+
+/* ==================================================
+   READ FORM
+================================================== */
+
+function getFormData() {
+
+    const task = {
+
+        id: generateId(),
+
+        title:
+            document.getElementById("title")
+                ?.value.trim() ||
+            "Новое задание",
+
+        description:
+            document.getElementById("description")
+                ?.value.trim() ||
+            "Интерактивное учебное задание",
+
+        difficulty:
+            document.getElementById("difficulty")
+                ?.value ||
+            "Средне",
+
+        type: currentType,
+
+        question:
+            document.getElementById("question")
+                ?.value.trim() ||
+            ""
+
+    };
+
+
+    if (
+        currentType === "single" ||
+        currentType === "multiple"
+    ) {
+
+        task.options = [];
+
+        task.correct =
+            currentType === "multiple"
+                ? []
+                : 0;
+
+
+        document
+            .querySelectorAll(
+                "#options .option-row"
+            )
+            .forEach((row,index) => {
+
+                const text =
+                    row.querySelector(
+                        'input[type="text"]'
+                    )?.value.trim() || "";
+
+
+                if (text) {
+                    task.options.push(text);
+                }
+
+
+                const checked =
+                    row.querySelector(
+                        'input[type="radio"], input[type="checkbox"]'
+                    )?.checked;
+
+
+                if (checked) {
+
+                    if (
+                        currentType ===
+                        "multiple"
+                    ) {
+
+                        task.correct.push(
+                            task.options.length - 1
+                        );
+
+                    } else {
+
+                        task.correct =
+                            task.options.length - 1;
+
+                    }
+
+                }
+
+            });
+
+
+        task.items =
+            task.options.length;
+
+    }
+
+
+    if (currentType === "matching") {
+
+        task.pairs = [];
+
+
+        document
+            .querySelectorAll(
+                "#pairs .option-row"
+            )
+            .forEach(row => {
+
+                const inputs =
+                    row.querySelectorAll("input");
+
+
+                if (
+                    inputs[0].value.trim() &&
+                    inputs[1].value.trim()
+                ) {
+
+                    task.pairs.push({
+
+                        left:
+                            inputs[0].value.trim(),
+
+                        right:
+                            inputs[1].value.trim()
+
+                    });
+
+                }
+
+            });
+
+
+        task.items =
+            task.pairs.length;
+
+    }
+
+
+    if (currentType === "sequence") {
+
+        task.sequence = [];
+
+
+        document
+            .querySelectorAll(
+                "#sequenceRows input"
+            )
+            .forEach(input => {
+
+                if (input.value.trim()) {
+
+                    task.sequence.push(
+                        input.value.trim()
+                    );
+
+                }
+
+            });
+
+
+        task.items =
+            task.sequence.length;
+
+    }
+
+
+    if (
+        currentType === "category" ||
+        currentType === "sort"
+    ) {
+
+        task.categories =
+            document
+                .getElementById("categories")
+                ?.value
+                .split(",")
+                .map(x => x.trim())
+                .filter(Boolean) || [];
+
+
+        task.categoryItems = [];
+
+
+        document
+            .querySelectorAll(
+                "#categoryRows input"
+            )
+            .forEach(input => {
+
+                if (input.value.trim()) {
+
+                    task.categoryItems.push({
+
+                        text:
+                            input.value.trim(),
+
+                        category:
+                            task.categories[0] ||
+                            "Категория"
+
+                    });
+
+                }
+
+            });
+
+
+        task.items =
+            task.categoryItems.length;
+
+    }
+
+
+    if (currentType === "fill") {
+
+        task.answers =
+            document
+                .getElementById("answers")
+                ?.value
+                .split(",")
+                .map(x => x.trim())
+                .filter(Boolean) || [];
+
+        task.items = 1;
+
+    }
+
+
+    if (currentType === "error") {
+
+        task.code = [];
+
+
+        document
+            .querySelectorAll(
+                "#codeRows input"
+            )
+            .forEach(input => {
+
+                if (input.value.trim()) {
+
+                    task.code.push(
+                        input.value.trim()
+                    );
+
+                }
+
+            });
+
+
+        task.correct = 0;
+
+
+        task.explanation =
+            document
+                .getElementById(
+                    "explanation"
+                )
+                ?.value.trim() || "";
+
+
+        task.items =
+            task.code.length;
+
+    }
+
+
+    return task;
+
+}
+
+
+/* ==================================================
+   PREVIEW
+================================================== */
+
+function updatePreview() {
+
+    const task =
+        getFormData();
+
+
+    const preview =
+        document.getElementById(
+            "previewContent"
+        );
+
+
+    let html = `
+
+        <div class="question">
+
+            <div class="label">
+                ${escapeHtml(
+                    TYPES[currentType].name
+                )}
+            </div>
+
+            <h3>
+                ${escapeHtml(
+                    task.question ||
+                    "Введите вопрос..."
+                )}
+            </h3>
+
+    `;
+
+
+    if (
+        currentType === "single" ||
+        currentType === "multiple"
+    ) {
+
+        (task.options || [])
+            .filter(Boolean)
+            .forEach(option => {
+
+                html += `
+
+                    <div class="answer">
+                        ${escapeHtml(option)}
+                    </div>
+
+                `;
+
+            });
+
+    }
+
+
+    if (currentType === "matching") {
+
+        (task.pairs || [])
+            .forEach(pair => {
+
+                html += `
+
+                    <div class="answer">
+                        <strong>
+                            ${escapeHtml(pair.left)}
+                        </strong>
+
+                        →
+
+                        ${escapeHtml(pair.right)}
+                    </div>
+
+                `;
+
+            });
+
+    }
+
+
+    if (currentType === "sequence") {
+
+        (task.sequence || [])
+            .forEach((item,index) => {
+
+                html += `
+
+                    <div class="answer">
+                        <strong>
+                            ${index + 1}.
+                        </strong>
+
+                        ${escapeHtml(item)}
+                    </div>
+
+                `;
+
+            });
+
+    }
+
+
+    if (currentType === "fill") {
+
+        html += `
+
+            <input
+                class="play-input"
+                placeholder="Введите ответ..."
+            >
+
+        `;
+
+    }
+
+
+    if (
+        currentType === "category" ||
+        currentType === "sort"
+    ) {
+
+        (task.categoryItems || [])
+            .forEach(item => {
+
+                html += `
+
+                    <div class="answer">
+                        ${escapeHtml(item.text)}
+                    </div>
+
+                `;
+
+            });
+
+    }
+
+
+    if (currentType === "error") {
+
+        (task.code || [])
+            .forEach((line,index) => {
+
+                html += `
+
+                    <div
+                        class="answer"
+                        style="font-family:monospace"
+                    >
+                        ${index + 1}.
+                        ${escapeHtml(line)}
+                    </div>
+
+                `;
+
+            });
+
+    }
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    preview.innerHTML = html;
+
+}
+
+
+/* ==================================================
+   SAVE
+================================================== */
+
+document
+    .getElementById("saveButton")
+    .addEventListener("click",() => {
+
+        const task =
+            getFormData();
+
+
+        if (
+            !task.title ||
+            task.title === "Новое задание"
+        ) {
+
+            showToast(
+                "Введите название задания"
+            );
+
+            return;
+
+        }
+
+
+        saveTask(task);
+
+
+        showToast(
+            "✓ Задание сохранено!"
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "index.html";
+
+        },900);
+
+    });
+
+
+/* ==================================================
+   MODES
+================================================== */
+
+const editMode =
+    document.getElementById("editMode");
+
+const previewMode =
+    document.getElementById("previewMode");
+
+const editorContent =
+    document.getElementById("editorContent");
+
+
+editMode.addEventListener(
+    "click",
+    () => {
+
+        editMode.classList.add("active");
+        previewMode.classList.remove("active");
+
+        editorContent.style.display =
+            "block";
+
+    }
+);
+
+
+previewMode.addEventListener(
+    "click",
+    () => {
+
+        previewMode.classList.add("active");
+        editMode.classList.remove("active");
+
+        document
+            .getElementById("previewContent")
+            .scrollIntoView({
+                behavior:"smooth"
+            });
+
+    }
+);
+
+
+document
+    .getElementById("previewButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById("previewContent")
+                .scrollIntoView({
+                    behavior:"smooth"
+                });
+
+        }
+    );
+
+
+/* ==================================================
+   INITIALIZE BUILDER
+================================================== */
+
+renderEditor();
+
+
+/* ==================================================
+   PLAY MODE
+================================================== */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+if (params.get("play") === "1") {
+
+    const saved =
+        sessionStorage.getItem(
+            "playTask"
+        );
+
+
+    if (saved) {
+
+        const task =
+            JSON.parse(saved);
+
+        openPlayMode(task);
+
+    }
+
+}
+
+
+/* ==================================================
+   PLAY MODE ENGINE
+================================================== */
+
+function openPlayMode(task) {
+
+    document.getElementById(
+        "mainPage"
+    ).innerHTML = `
+
+        <div class="play-container">
+
+            <div class="page-title">
+
+                <div class="label">
+                    ВЫПОЛНЕНИЕ
+                </div>
+
+                <h1>
+                    ${escapeHtml(task.title)}
+                </h1>
+
+                <p>
+                    ${escapeHtml(
+                        task.description || ""
+                    )}
+                </p>
+
+            </div>
+
+
+            <div
+                class="play-card"
+                id="playCard"
+            ></div>
+
+        </div>
+
+    `;
+
+
+    renderPlayTask(task);
+
+}
+
+
+/* ==================================================
+   RENDER PLAY TASK
+================================================== */
+
+function renderPlayTask(task) {
+
+    const card =
+        document.getElementById(
+            "playCard"
+        );
+
+
+    let html = `
+
+        <div class="play-top">
+
+            <div class="play-type">
+                ${TYPES[task.type]?.icon || "📝"}
+                ${TYPES[task.type]?.name || "Задание"}
+            </div>
+
+            <div>
+                ${task.items || 1} элементов
+            </div>
+
+        </div>
+
+
+        <div class="progress">
+            <div
+                class="progress-fill"
+                style="width:100%"
+            ></div>
+        </div>
+
+
+        <h1>
+            ${escapeHtml(task.question || "")}
+        </h1>
+
+    `;
+
+
+    if (task.type === "single") {
+
+        task.options.forEach(
+            (option,index) => {
+
+                html += `
+
+                    <div
+                        class="play-option"
+                        data-index="${index}"
+                    >
+                        ${escapeHtml(option)}
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Проверить ответ
+            </button>
+
+        `;
+
+    }
+
+
+    if (task.type === "multiple") {
+
+        task.options.forEach(
+            (option,index) => {
+
+                html += `
+
+                    <div
+                        class="play-option multiple-option"
+                        data-index="${index}"
+                    >
+                        <input
+                            type="checkbox"
+                            style="margin-right:10px"
+                        >
+
+                        ${escapeHtml(option)}
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Проверить
+            </button>
+
+        `;
+
+    }
+
+
+    if (task.type === "fill") {
+
+        html += `
+
+            <input
+                class="play-input"
+                id="fillAnswer"
+                placeholder="Введите ответ..."
+            >
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Проверить
+            </button>
+
+        `;
+
+    }
+
+
+    if (task.type === "error") {
+
+        task.code.forEach(
+            (line,index) => {
+
+                html += `
+
+                    <div
+                        class="play-option error-option"
+                        data-index="${index}"
+                        style="font-family:monospace"
+                    >
+                        ${index + 1}.
+                        ${escapeHtml(line)}
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Найти ошибку
+            </button>
+
+        `;
+
+    }
+
+
+    if (
+        task.type === "sequence"
+    ) {
+
+        const shuffled =
+            [...task.sequence]
+                .sort(
+                    () =>
+                        Math.random() - .5
+                );
+
+
+        html += `
+
+            <p
+                style="
+                color:#6b7280;
+                margin-bottom:15px;
+                "
+            >
+                Нажимайте элементы
+                в правильном порядке:
+            </p>
+
+        `;
+
+
+        shuffled.forEach(
+            (item,index) => {
+
+                html += `
+
+                    <div
+                        class="play-option sequence-option"
+                        data-value="${escapeHtml(item)}"
+                    >
+                        ${escapeHtml(item)}
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <div
+                id="sequenceResult"
+                style="
+                margin-top:15px;
+                font-weight:700;
+                "
+            ></div>
+
+            <button
+                class="play-button"
+                id="checkSequence"
+            >
+                Проверить порядок
+            </button>
+
+        `;
+
+    }
+
+
+    if (
+        task.type === "matching"
+    ) {
+
+        const rights =
+            [...task.pairs]
+                .sort(
+                    () =>
+                        Math.random() - .5
+                );
+
+
+        task.pairs.forEach(
+            (pair,index) => {
+
+                html += `
+
+                    <div
+                        style="
+                        display:grid;
+                        grid-template-columns:1fr 1fr;
+                        gap:10px;
+                        margin-bottom:10px;
+                        "
+                    >
+
+                        <div
+                            class="answer"
+                        >
+                            ${escapeHtml(pair.left)}
+                        </div>
+
+                        <select
+                            class="match-select"
+                            data-index="${index}"
+                        >
+
+                            <option value="">
+                                Выберите...
+                            </option>
+
+                            ${rights.map(
+                                right => `
+                                    <option
+                                        value="${escapeHtml(right.right)}"
+                                    >
+                                        ${escapeHtml(right.right)}
+                                    </option>
+                                `
+                            ).join("")}
+
+                        </select>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Проверить пары
+            </button>
+
+        `;
+
+    }
+
+
+    if (
+        task.type === "category" ||
+        task.type === "sort"
+    ) {
+
+        const items =
+            [...task.categoryItems]
+                .sort(
+                    () =>
+                        Math.random() - .5
+                );
+
+
+        html += `
+
+            <p
+                style="
+                color:#6b7280;
+                margin-bottom:15px;
+                "
+            >
+                Выберите категорию
+                для каждого элемента.
+            </p>
+
+        `;
+
+
+        items.forEach(
+            (item,index) => {
+
+                html += `
+
+                    <div
+                        style="
+                        display:grid;
+                        grid-template-columns:1fr 1fr;
+                        gap:10px;
+                        margin-bottom:10px;
+                        "
+                    >
+
+                        <div class="answer">
+                            ${escapeHtml(item.text)}
+                        </div>
+
+                        <select
+                            class="category-select"
+                            data-text="${escapeHtml(item.text)}"
+                        >
+
+                            <option value="">
+                                Выберите...
+                            </option>
+
+                            ${task.categories.map(
+                                category => `
+                                    <option>
+                                        ${escapeHtml(category)}
+                                    </option>
+                                `
+                            ).join("")}
+
+                        </select>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <button
+                class="play-button"
+                id="checkPlay"
+            >
+                Проверить
+            </button>
+
+        `;
+
+    }
+
+
+    card.innerHTML = html;
+
+
+    setupPlayEvents(task);
+
+}
+
+
+/* ==================================================
+   PLAY EVENTS
+================================================== */
+
+function setupPlayEvents(task) {
+
+    let selectedSingle = null;
+
+
+    document
+        .querySelectorAll(".play-option")
+        .forEach(option => {
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        task.type === "single"
+                    ) {
+
+                        document
+                            .querySelectorAll(
+                                ".play-option"
+                            )
+                            .forEach(item =>
+                                item.classList.remove(
+                                    "selected"
+                                )
+                            );
+
+
+                        option.classList.add(
+                            "selected"
+                        );
+
+
+                        selectedSingle =
+                            Number(
+                                option.dataset.index
+                            );
+
+                    }
+
+
+                    if (
+                        task.type === "multiple"
+                    ) {
+
+                        option.classList.toggle(
+                            "selected"
+                        );
+
+                        const checkbox =
+                            option.querySelector(
+                                "input"
+                            );
+
+                        checkbox.checked =
+                            option.classList.contains(
+                                "selected"
+                            );
+
+                    }
+
+
+                    if (
+                        task.type === "error"
+                    ) {
+
+                        document
+                            .querySelectorAll(
+                                ".error-option"
+                            )
+                            .forEach(item =>
+                                item.classList.remove(
+                                    "selected"
+                                )
+                            );
+
+
+                        option.classList.add(
+                            "selected"
+                        );
+
+
+                        selectedSingle =
+                            Number(
+                                option.dataset.index
+                            );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    if (task.type === "sequence") {
+
+        let order = [];
+
+
+        document
+            .querySelectorAll(
+                ".sequence-option"
+            )
+            .forEach(option => {
+
+                option.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            order.includes(
+                                option.dataset.value
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        order.push(
+                            option.dataset.value
+                        );
+
+
+                        option.style.opacity =
+                            ".45";
+
+                        option.style.pointerEvents =
+                            "none";
+
+
+                        option.innerHTML =
+                            `<strong>${order.length}.</strong> ${escapeHtml(option.dataset.value)}`;
+
+
+                        document.getElementById(
+                            "sequenceResult"
+                        ).textContent =
+                            "Выбрано: " +
+                            order.length;
+
+                    }
+                );
+
+            });
+
+
+        document
+            .getElementById(
+                "checkSequence"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    const correct =
+                        JSON.stringify(order) ===
+                        JSON.stringify(
+                            task.sequence
+                        );
+
+
+                    showResult(
+                        correct ? 1 : 0,
+                        1,
+                        correct
+                            ? "Правильный порядок!"
+                            : "Порядок неправильный."
+                    );
+
+                }
+            );
+
+    }
+
+
+    const checkButton =
+        document.getElementById(
+            "checkPlay"
+        );
+
+
+    if (!checkButton) return;
+
+
+    checkButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                task.type === "single"
+            ) {
+
+                if (selectedSingle === null) {
+
+                    alert(
+                        "Выберите ответ."
+                    );
+
+                    return;
+
+                }
+
+
+                const correct =
+                    selectedSingle ===
+                    task.correct;
+
+
+                markAnswers(
+                    task,
+                    correct,
+                    selectedSingle
+                );
+
+
+                showResult(
+                    correct ? 1 : 0,
+                    1,
+                    correct
+                        ? "Правильно!"
+                        : "Неверно."
+                );
+
+            }
+
+
+            if (
+                task.type === "multiple"
+            ) {
+
+                const selected =
+                    [];
+
+
+                document
+                    .querySelectorAll(
+                        ".multiple-option"
+                    )
+                    .forEach(option => {
+
+                        const checkbox =
+                            option.querySelector(
+                                "input"
+                            );
+
+
+                        if (checkbox.checked) {
+
+                            selected.push(
+                                Number(
+                                    option.dataset.index
+                                )
+                            );
+
+                        }
+
+                    });
+
+
+                const correct =
+                    arraysEqual(
+                        selected,
+                        task.correct
+                    );
+
+
+                showResult(
+                    correct ? 1 : 0,
+                    1,
+                    correct
+                        ? "Все правильные варианты выбраны!"
+                        : "Есть ошибка в выборе."
+                );
+
+            }
+
+
+            if (
+                task.type === "fill"
+            ) {
+
+                const value =
+                    document.getElementById(
+                        "fillAnswer"
+                    ).value
+                    .trim()
+                    .toLowerCase();
+
+
+                const correct =
+                    task.answers.some(
+                        answer =>
+                            answer
+                                .toLowerCase()
+                                .trim() === value
+                    );
+
+
+                showResult(
+                    correct ? 1 : 0,
+                    1,
+                    correct
+                        ? "Правильный ответ!"
+                        : "Попробуйте ещё раз."
+                );
+
+            }
+
+
+            if (
+                task.type === "error"
+            ) {
+
+                if (selectedSingle === null) {
+
+                    alert(
+                        "Выберите строку."
+                    );
+
+                    return;
+
+                }
+
+
+                const correct =
+                    selectedSingle ===
+                    task.correct;
+
+
+                showResult(
+                    correct ? 1 : 0,
+                    1,
+                    correct
+                        ? "Ошибка найдена!"
+                        : task.explanation ||
+                          "Выбрана неправильная строка."
+                );
+
+            }
+
+
+            if (
+                task.type === "matching"
+            ) {
+
+                const selects =
+                    document.querySelectorAll(
+                        ".match-select"
+                    );
+
+
+                let correctCount = 0;
+
+
+                selects.forEach(select => {
+
+                    const index =
+                        Number(
+                            select.dataset.index
+                        );
+
+
+                    if (
+                        select.value ===
+                        task.pairs[index].right
+                    ) {
+
+                        correctCount++;
+
+                    }
+
+                });
+
+
+                showResult(
+                    correctCount,
+                    task.pairs.length,
+                    "Пары проверены."
+                );
+
+            }
+
+
+            if (
+                task.type === "category" ||
+                task.type === "sort"
+            ) {
+
+                const selects =
+                    document.querySelectorAll(
+                        ".category-select"
+                    );
+
+
+                let correctCount = 0;
+
+
+                selects.forEach(select => {
+
+                    const text =
+                        select.dataset.text;
+
+
+                    const item =
+                        task.categoryItems.find(
+                            item =>
+                                item.text ===
+                                text
+                        );
+
+
+                    if (
+                        item &&
+                        select.value ===
+                        item.category
+                    ) {
+
+                        correctCount++;
+
+                    }
+
+                });
+
+
+                showResult(
+                    correctCount,
+                    task.categoryItems.length,
+                    "Распределение проверено."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==================================================
+   MARK ANSWERS
+================================================== */
+
+function markAnswers(
+    task,
+    correct,
+    selected
+) {
+
+    document
+        .querySelectorAll(
+            ".play-option"
+        )
+        .forEach(option => {
+
+            const index =
+                Number(
+                    option.dataset.index
+                );
+
+
+            if (
+                index === selected
+            ) {
+
+                option.classList.add(
+                    correct
+                        ? "correct"
+                        : "wrong"
+                );
+
+            }
+
+        });
+
+}
+
+
+/* ==================================================
+   RESULT
+================================================== */
+
+function showResult(
+    correct,
+    total,
+    message
+) {
+
+    const percent =
+        total === 0
+            ? 0
+            : Math.round(
+                correct / total * 100
+            );
+
+
+    const card =
+        document.getElementById(
+            "playCard"
+        );
+
+
+    const feedback =
+        percent >= 80
+            ? "🎉 Отличный результат!"
+            : percent >= 60
+            ? "👍 Хорошая работа!"
+            : "📚 Стоит повторить тему.";
+
+
+    card.insertAdjacentHTML(
+        "beforeend",
+        `
+
+        <div
+            class="result"
+            id="resultBox"
+        >
+
+            <div class="result-icon">
+                ${percent >= 80 ? "🎉" : "📚"}
+            </div>
+
+            <h2>
+                ${feedback}
+            </h2>
+
+            <div class="score">
+                ${percent}%
+            </div>
+
+            <p>
+                ${escapeHtml(message)}
+            </p>
+
+            <div class="result-stats">
+
+                <div class="result-stat">
+
+                    <strong>
+                        ${correct}
+                    </strong>
+
+                    <span>
+                        Правильно
+                    </span>
+
+                </div>
+
+                <div class="result-stat">
+
+                    <strong>
+                        ${total - correct}
+                    </strong>
+
+                    <span>
+                        Ошибки
+                    </span>
+
+                </div>
+
+                <div class="result-stat">
+
+                    <strong>
+                        ${total}
+                    </strong>
+
+                    <span>
+                        Всего
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+                class="play-button"
+                onclick="location.href='index.html'"
+                style="max-width:400px"
+            >
+                Вернуться к заданиям
+            </button>
+
+        </div>
+
+        `
+    );
+
+
+    if (percent >= 80) {
+
+        createConfetti();
+
+    }
+
+
+    document
+        .getElementById(
+            "resultBox"
+        )
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
+
+
+/* ==================================================
+   ARRAY COMPARE
+================================================== */
+
+function arraysEqual(a,b) {
+
+    if (!Array.isArray(a) ||
+        !Array.isArray(b)) {
+
+        return false;
+
+    }
+
+
+    if (a.length !== b.length) {
+        return false;
+    }
+
+
+    return [...a].sort(
+        (x,y) => x-y
+    ).join(",") ===
+    [...b].sort(
+        (x,y) => x-y
+    ).join(",");
+
+}
+
+
+/* ==================================================
+   CONFETTI
+================================================== */
+
+function createConfetti() {
+
+    for (
+        let i = 0;
+        i < 80;
+        i++
+    ) {
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.className =
+            "confetti";
+
+
+        piece.style.left =
+            Math.random() * 100 + "%";
+
+
+        piece.style.background =
+            [
+                "#635bff",
+                "#22c55e",
+                "#f59e0b",
+                "#ef4444",
+                "#06b6d4",
+                "#ec4899"
+            ][
+                Math.floor(
+                    Math.random() * 6
+                )
+            ];
+
+
+        piece.style.animationDuration =
+            2 + Math.random() * 2 + "s";
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(
+            () => piece.remove(),
+            4000
+        );
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
